@@ -41,8 +41,19 @@ def get_balance(w3, address):
     return ether 
 
 def send_transaction(w3, account, receiver, ether):
-    """Send an authorized transaction."""
+    """Send an authorized and secure transaction."""
     w3.eth.setGasPriceStrategy(medium_gas_price_strategy)
     wei_value = w3.towei(ether, "ether")
-    gas_estimate = w3.eth.estimateGas({})
+    gas_estimate = w3.eth.estimateGas({"to": receiver, "from":account.address, "value": wei_value})
+        raw_transaction = {
+            "to" : receiver, 
+            "from": account.address, 
+            "value": wei_value, 
+            "gas": gas_estimate, 
+            "gasPrice": 0, 
+            "nonce" :
+        w3.eth.getTransactionCount(account.address)
+         }
+         signed_transaction = account.signTransaction(raw_transaction)
 
+         return w3.eth.sendRawTransaction(signed_transaction.raw_transaction)
